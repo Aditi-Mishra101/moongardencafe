@@ -15,6 +15,8 @@ const recipes = [
     customer: "Noor Willow",
     mood: "dreamy",
     portrait: 0,
+    glass: "Crescent cup",
+    glassClass: "crescent",
     combo: ["moonmint", "starflower", "dreamleaf"],
     reward: 14,
     rep: 2
@@ -26,6 +28,8 @@ const recipes = [
     customer: "Iris Sol",
     mood: "bright",
     portrait: 1,
+    glass: "Sunrise flute",
+    glassClass: "flute",
     combo: ["sunberry", "moonmint", "starflower"],
     reward: 12,
     rep: 2
@@ -37,6 +41,8 @@ const recipes = [
     customer: "Mira Vale",
     mood: "rosy",
     portrait: 2,
+    glass: "Rose goblet",
+    glassClass: "goblet",
     combo: ["rosehip", "mistbasil", "dreamleaf"],
     reward: 16,
     rep: 3
@@ -48,6 +54,8 @@ const recipes = [
     customer: "Sage Quill",
     mood: "misty",
     portrait: 3,
+    glass: "Study tumbler",
+    glassClass: "tumbler",
     combo: ["mistbasil", "moonmint", "sunberry"],
     reward: 15,
     rep: 3
@@ -59,6 +67,8 @@ const recipes = [
     customer: "Elio Bloom",
     mood: "blush",
     portrait: 4,
+    glass: "Blush coupe",
+    glassClass: "coupe",
     combo: ["rosehip", "starflower", "sunberry"],
     reward: 18,
     rep: 4
@@ -108,6 +118,7 @@ const elements = {
   customerName: document.querySelector("#customerName"),
   requestText: document.querySelector("#requestText"),
   recipeHint: document.querySelector("#recipeHint"),
+  glassRequest: document.querySelector("#glassRequest"),
   bookHint: document.querySelector("#bookHint"),
   ingredients: document.querySelector("#ingredients"),
   selectedList: document.querySelector("#selectedList"),
@@ -116,6 +127,7 @@ const elements = {
   upgrades: document.querySelector("#upgrades"),
   messageLog: document.querySelector("#messageLog"),
   brewButton: document.querySelector("#brewButton"),
+  brewStation: document.querySelector("#brewStation"),
   clearButton: document.querySelector("#clearButton"),
   cup: document.querySelector("#cup"),
   liquid: document.querySelector("#liquid"),
@@ -132,11 +144,13 @@ function render() {
   elements.streak.textContent = state.streak;
   elements.customerName.textContent = recipe.customer;
   elements.requestText.textContent = recipe.request;
-  elements.recipeHint.textContent = recipe.hint;
-  elements.bookHint.textContent = `${recipe.customer} wants: ${recipe.hint.replace("Look for: ", "")}.`;
+  elements.recipeHint.textContent = recipe.hint.replace("Look for: ", "");
+  elements.glassRequest.textContent = recipe.glass;
+  elements.bookHint.textContent = `${recipe.customer}: ${recipe.hint.replace("Look for: ", "")}. Serve in a ${recipe.glass.toLowerCase()}.`;
   elements.recipeCount.textContent = `${recipes.length} known`;
   elements.customerFigure.dataset.mood = recipe.mood;
   elements.customerFigure.style.setProperty("--portrait-index", recipe.portrait);
+  elements.cup.dataset.glass = recipe.glassClass;
 
   renderIngredients();
   renderSelected();
@@ -156,7 +170,7 @@ function renderIngredients() {
     button.dataset.herb = herb.id;
     button.innerHTML = `
       <span class="herb-icon" style="--herb:${herb.color}; --icon-index:${herb.index}" aria-hidden="true"></span>
-      <span><strong>${herb.name}</strong><span>${herb.note}</span></span>
+      <span class="herb-copy"><strong>${herb.name}</strong><span>${herb.note}</span></span>
     `;
     button.addEventListener("click", () => chooseHerb(herb.id));
     elements.ingredients.appendChild(button);
@@ -167,7 +181,7 @@ function renderSelected() {
   elements.selectedList.innerHTML = "";
 
   if (!state.selected.length) {
-    elements.selectedList.innerHTML = `<span class="blend-empty">Pick exactly 3 herbs from the Herb Bar.</span>`;
+    elements.selectedList.innerHTML = `<span class="blend-empty">No herbs selected</span>`;
     return;
   }
 
@@ -189,7 +203,7 @@ function renderRecipes() {
     const active = index === state.currentRecipe ? " current" : "";
     card.className = `recipe${active}`;
     const names = recipe.combo.map(id => herbs.find(herb => herb.id === id).name).join(" + ");
-    card.innerHTML = `<strong>${recipe.name}</strong><span>${names}</span>`;
+    card.innerHTML = `<strong>${recipe.name}</strong><span>${names}</span><em>${recipe.glass}</em>`;
     elements.recipes.appendChild(card);
   });
 }
@@ -218,7 +232,7 @@ function chooseHerb(id) {
   } else if (state.selected.length < 3) {
     state.selected.push(id);
   } else {
-    writeMessage("A blend can hold only 3 herbs. Clear one to change the recipe.");
+    writeMessage("The glass can hold only 3 herbs.");
   }
 
   render();
@@ -242,14 +256,14 @@ function brew() {
     state.streak += 1;
     state.currentRecipe = (state.currentRecipe + 1) % recipes.length;
     state.selected = [];
-    writeMessage(`Perfect ${recipe.name}. You earned ${earned} mooncoins and ${rep} reputation. A new visitor steps through the door.`);
-    pulse(elements.cup, "success");
+    writeMessage(`Served ${recipe.name} in the ${recipe.glass}. +${earned} mooncoins, +${rep} reputation.`);
+    pulse(elements.brewStation, "success");
     pulse(elements.customerStage, "arrival");
   } else {
     const loss = state.kindMistakes ? 1 : 3;
     state.coins = Math.max(0, state.coins - loss);
     state.streak = 0;
-    writeMessage(`The flavor drifted off course. You lost ${loss} mooncoin${loss === 1 ? "" : "s"}. Check the recipe book and try again.`);
+    writeMessage(`The blend missed the mood. -${loss} mooncoin${loss === 1 ? "" : "s"}.`);
     pulse(elements.customerCard, "mistake");
   }
 
@@ -295,7 +309,7 @@ function pulse(element, className) {
 elements.brewButton.addEventListener("click", brew);
 elements.clearButton.addEventListener("click", () => {
   state.selected = [];
-  writeMessage("Blend cleared. Choose a fresh moonlit recipe.");
+  writeMessage("Blend cleared.");
   render();
 });
 
