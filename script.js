@@ -1,17 +1,17 @@
 const herbs = [
-  { id: "moonmint", name: "Moonmint", index: 0, note: "cool and calming", color: "#8ff1c4" },
-  { id: "starflower", name: "Starflower", index: 1, note: "soft floral glow", color: "#80d7ff" },
-  { id: "dreamleaf", name: "Dreamleaf", index: 2, note: "sleepy sweetness", color: "#bda0ff" },
-  { id: "sunberry", name: "Sunberry", index: 3, note: "bright citrus spark", color: "#ffd77b" },
-  { id: "mistbasil", name: "Mist Basil", index: 4, note: "fresh forest lift", color: "#77e7a2" },
-  { id: "rosehip", name: "Rosehip", index: 5, note: "warm rosy comfort", color: "#ff9fcf" }
+  { id: "moonmint", name: "Moonmint", index: 0, note: "cool and calming", color: "#9fbec7" },
+  { id: "starflower", name: "Starflower", index: 1, note: "soft floral glow", color: "#c7b7da" },
+  { id: "dreamleaf", name: "Dreamleaf", index: 2, note: "sleepy sweetness", color: "#a997c6" },
+  { id: "sunberry", name: "Sunberry", index: 3, note: "bright citrus spark", color: "#e6c88f" },
+  { id: "mistbasil", name: "Mist Basil", index: 4, note: "fresh forest lift", color: "#789184" },
+  { id: "rosehip", name: "Rosehip", index: 5, note: "warm rosy comfort", color: "#d8a5b3" }
 ];
 
 const recipes = [
   {
     name: "Silver Sleep Tisane",
-    request: "Tonight sleep feels distant.",
-    hint: "Look for: calm, floral, dreams",
+    request: "Please make a drink for forgotten dreams.",
+    hint: "calm • floral • dreams",
     customer: "Noor Willow",
     mood: "dreamy",
     portrait: 0,
@@ -23,8 +23,8 @@ const recipes = [
   },
   {
     name: "Dawn Glow Brew",
-    request: "Morning courage has gone quiet.",
-    hint: "Look for: citrus, mint, shine",
+    request: "I need courage for tomorrow.",
+    hint: "bright • cool • brave",
     customer: "Iris Sol",
     mood: "bright",
     portrait: 1,
@@ -36,8 +36,8 @@ const recipes = [
   },
   {
     name: "Garden Heart Tea",
-    request: "My heart keeps walking home without me.",
-    hint: "Look for: rose, forest, soft",
+    request: "I want something that smells like coming home.",
+    hint: "warm • green • tender",
     customer: "Mira Vale",
     mood: "rosy",
     portrait: 2,
@@ -49,8 +49,8 @@ const recipes = [
   },
   {
     name: "Clear Mist Cooler",
-    request: "Moonlight is turning every page into mist.",
-    hint: "Look for: fresh, cool, bright",
+    request: "My thoughts keep fogging the windows.",
+    hint: "fresh • clear • golden",
     customer: "Sage Quill",
     mood: "misty",
     portrait: 3,
@@ -62,8 +62,8 @@ const recipes = [
   },
   {
     name: "Blush Moon Cordial",
-    request: "I want the garden to blush before they arrive.",
-    hint: "Look for: rosy, glowing, bright",
+    request: "I miss someone, but I do not want to.",
+    hint: "rose • light • ache",
     customer: "Elio Bloom",
     mood: "blush",
     portrait: 4,
@@ -78,22 +78,22 @@ const recipes = [
 const upgrades = [
   {
     id: "lanterns",
-    name: "Glow Lanterns",
-    text: "+3 coins for every correct drink",
+    name: "Lantern of Quiet",
+    text: "warmer light, kinder tips",
     cost: 35,
     apply: state => state.bonusCoins += 3
   },
   {
     id: "book",
-    name: "Lunar Recipe Notes",
-    text: "+1 reputation for every correct drink",
+    name: "Grandmother's Journal",
+    text: "the notebook remembers more",
     cost: 50,
     apply: state => state.bonusRep += 1
   },
   {
     id: "greenhouse",
-    name: "Glass Greenhouse",
-    text: "Mistakes cost only 1 mooncoin",
+    name: "Conservatory Glass",
+    text: "plants soften failed blends",
     cost: 70,
     apply: state => state.kindMistakes = true
   }
@@ -106,6 +106,9 @@ const state = {
   selected: [],
   currentRecipe: 0,
   brewing: false,
+  ambienceStarted: false,
+  audioContext: null,
+  ambienceGain: null,
   bonusCoins: 0,
   bonusRep: 0,
   kindMistakes: false,
@@ -148,9 +151,9 @@ function render() {
   elements.streak.textContent = state.streak;
   elements.customerName.textContent = recipe.customer;
   elements.requestText.textContent = recipe.request;
-  elements.recipeHint.textContent = recipe.hint.replace("Look for: ", "");
+  elements.recipeHint.textContent = recipe.hint;
   elements.glassRequest.textContent = recipe.glass;
-  elements.bookHint.textContent = `${recipe.customer}: ${recipe.hint.replace("Look for: ", "")}. Serve in a ${recipe.glass.toLowerCase()}.`;
+  elements.bookHint.textContent = `${recipe.customer}: ${recipe.hint}. Serve in a ${recipe.glass.toLowerCase()}.`;
   elements.recipeCount.textContent = `${recipes.length} known`;
   elements.customerFigure.dataset.mood = recipe.mood;
   elements.customerFigure.style.setProperty("--portrait-index", recipe.portrait);
@@ -236,13 +239,14 @@ function renderUpgrades() {
 
 function chooseHerb(id) {
   if (state.brewing) return;
+  startAmbience();
 
   if (state.selected.includes(id)) {
     state.selected = state.selected.filter(item => item !== id);
   } else if (state.selected.length < 3) {
     state.selected.push(id);
   } else {
-    writeMessage("The glass can hold only 3 herbs.");
+    writeMessage("The vessel can only hold three memories.");
   }
 
   render();
@@ -250,9 +254,10 @@ function chooseHerb(id) {
 
 function brew() {
   if (state.brewing) return;
+  startAmbience();
 
   if (state.selected.length !== 3) {
-    writeMessage("Choose exactly 3 herbs before brewing.");
+    writeMessage("Three herbs are needed before the ritual can begin.");
     pulse(elements.customerCard, "mistake");
     return;
   }
@@ -275,7 +280,8 @@ function brew() {
     state.currentRecipe = (state.currentRecipe + 1) % recipes.length;
     state.selected = [];
     elements.potionReveal.textContent = recipe.name;
-    writeMessage(`Served in the ${recipe.glass}. The visitor leaves glowing.`);
+    writeMessage(`The ${recipe.glass} holds the feeling gently.`);
+    playChime([523.25, 659.25, 783.99], 0.045);
     pulse(elements.brewStation, "success");
     pulse(elements.coinBurst, "burst");
     pulse(elements.customerStage, "arrival");
@@ -283,7 +289,8 @@ function brew() {
     const loss = state.kindMistakes ? 1 : 3;
     state.coins = Math.max(0, state.coins - loss);
     state.streak = 0;
-    writeMessage(`The blend missed the mood. -${loss} mooncoin${loss === 1 ? "" : "s"}.`);
+    writeMessage(`The warmth reached the hands, not the heart. ${loss} mooncoin${loss === 1 ? "" : "s"} fade away.`);
+    playChime([392, 329.63], 0.028);
     pulse(elements.customerCard, "mistake");
   }
 
@@ -312,7 +319,73 @@ function startRitual() {
 
   void elements.brewStation.offsetWidth;
   elements.brewStation.classList.add("ritual");
-  writeMessage("The glass listens. The herbs begin to rise.");
+  writeMessage("The room grows quiet. The herbs begin to rise.");
+  playChime([261.63, 392], 0.028);
+}
+
+function startAmbience() {
+  if (state.ambienceStarted || !window.AudioContext && !window.webkitAudioContext) return;
+
+  const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+  const context = new AudioContextClass();
+  const gain = context.createGain();
+  gain.gain.value = 0.018;
+  gain.connect(context.destination);
+
+  const low = context.createOscillator();
+  const lowGain = context.createGain();
+  low.type = "sine";
+  low.frequency.value = 110;
+  lowGain.gain.value = 0.035;
+  low.connect(lowGain);
+  lowGain.connect(gain);
+  low.start();
+
+  const windBuffer = context.createBuffer(1, context.sampleRate * 2, context.sampleRate);
+  const windData = windBuffer.getChannelData(0);
+  for (let i = 0; i < windData.length; i += 1) {
+    windData[i] = (Math.random() * 2 - 1) * 0.16;
+  }
+  const wind = context.createBufferSource();
+  const windFilter = context.createBiquadFilter();
+  const windGain = context.createGain();
+  wind.buffer = windBuffer;
+  wind.loop = true;
+  windFilter.type = "lowpass";
+  windFilter.frequency.value = 520;
+  windGain.gain.value = 0.018;
+  wind.connect(windFilter);
+  windFilter.connect(windGain);
+  windGain.connect(gain);
+  wind.start();
+
+  window.setInterval(() => {
+    if (document.hidden) return;
+    playChime([880 + Math.random() * 120], 0.012);
+  }, 9000);
+
+  state.audioContext = context;
+  state.ambienceGain = gain;
+  state.ambienceStarted = true;
+}
+
+function playChime(notes, volume = 0.03) {
+  if (!state.audioContext || !state.ambienceGain) return;
+
+  const now = state.audioContext.currentTime;
+  notes.forEach((frequency, index) => {
+    const osc = state.audioContext.createOscillator();
+    const gain = state.audioContext.createGain();
+    osc.type = "sine";
+    osc.frequency.value = frequency;
+    gain.gain.setValueAtTime(0, now + index * 0.08);
+    gain.gain.linearRampToValueAtTime(volume, now + index * 0.08 + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + index * 0.08 + 1.2);
+    osc.connect(gain);
+    gain.connect(state.ambienceGain);
+    osc.start(now + index * 0.08);
+    osc.stop(now + index * 0.08 + 1.25);
+  });
 }
 
 function buyUpgrade(upgrade) {
@@ -321,7 +394,8 @@ function buyUpgrade(upgrade) {
   state.coins -= upgrade.cost;
   state.bought.add(upgrade.id);
   upgrade.apply(state);
-  writeMessage(`${upgrade.name} added to the cafe. The shop feels more alive.`);
+  writeMessage(`${upgrade.name} finds its place in the room.`);
+  playChime([493.88, 587.33, 739.99], 0.032);
   render();
 }
 
@@ -354,8 +428,9 @@ function pulse(element, className) {
 elements.brewButton.addEventListener("click", brew);
 elements.clearButton.addEventListener("click", () => {
   if (state.brewing) return;
+  startAmbience();
   state.selected = [];
-  writeMessage("Blend cleared.");
+  writeMessage("The tablecloth is brushed clean.");
   render();
 });
 
