@@ -26,7 +26,6 @@
       <section class="game-board" aria-label="Moon Garden cafe game board">
         <section class="visitor-panel" id="customerStage" aria-label="Current visitor">
           <div class="door-glow" aria-hidden="true"></div>
-          <div class="customer-figure" id="customerFigure"></div>
           <div class="order-bubble" id="customerCard">
             <div class="ticket-top">
               <span>Tonight's Visitor</span>
@@ -36,6 +35,7 @@
             <p id="recipeHint">calm / floral / dreams</p>
             <div class="glass-request">Serve: <span id="glassRequest">Crescent cup</span></div>
           </div>
+          <div class="customer-figure" id="customerFigure"></div>
         </section>
 
         <section class="brew-panel" aria-label="Brewing station">
@@ -85,6 +85,7 @@
         <section class="recipe-book" aria-label="Recipe book">
           <div class="book-spine"></div>
           <div class="book-page left-page">
+            <span class="pressed-herb pressed-one" aria-hidden="true"></span>
             <div class="section-title book-title">
               <h2>Recipe Book</h2>
               <span id="recipeCount">5 known</span>
@@ -92,6 +93,7 @@
             <div class="recipes" id="recipes"></div>
           </div>
           <div class="book-page right-page">
+            <span class="pressed-herb pressed-two" aria-hidden="true"></span>
             <h3>Current Order</h3>
             <p id="bookHint">Match the clues to one of the recipes.</p>
             <div class="book-note">The glass request changes the serving style.</div>
