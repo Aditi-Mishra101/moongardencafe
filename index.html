@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Moon Garden Herbal Drinks</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main class="game-shell">
+      <section class="cafe-scene" aria-label="Moon Garden herbal cafe">
+        <div class="sky">
+          <div class="moon"></div>
+          <span class="star star-a"></span>
+          <span class="star star-b"></span>
+          <span class="star star-c"></span>
+          <span class="star star-d"></span>
+        </div>
+
+        <header class="shop-sign">
+          <p>Moon Garden Cafe</p>
+          <h1>Herbal Drinks</h1>
+        </header>
+
+        <div class="menu-board">
+          <span>Tonight's Ritual</span>
+          <strong>Take order -> pick 3 herbs -> brew</strong>
+        </div>
+
+        <div class="door-wrap" aria-hidden="true">
+          <div class="door-glow"></div>
+          <div class="cafe-door">
+            <span class="door-window"></span>
+            <span class="door-knob"></span>
+          </div>
+          <p>New visitors arrive here</p>
+        </div>
+
+        <div class="customer-stage" id="customerStage">
+          <div class="customer-figure" id="customerFigure">
+            <div class="person-hood"></div>
+            <div class="person-face">
+              <span class="eye left"></span>
+              <span class="eye right"></span>
+            </div>
+            <div class="person-body"></div>
+            <div class="person-scarf"></div>
+          </div>
+
+          <div class="order-ticket" id="customerCard">
+            <div class="ticket-top">
+              <span>Order</span>
+              <strong id="customerName">Noor Willow</strong>
+            </div>
+            <h2 id="requestText">I need a gentle drink for peaceful sleep.</h2>
+            <p id="recipeHint">Look for: calm, floral, dreams</p>
+          </div>
+        </div>
+
+        <div class="counter">
+          <div class="shelf" aria-hidden="true">
+            <span></span><span></span><span></span><span></span>
+          </div>
+          <div class="cup" id="cup">
+            <span class="steam steam-one"></span>
+            <span class="steam steam-two"></span>
+            <span class="steam steam-three"></span>
+            <div class="liquid" id="liquid"></div>
+          </div>
+          <button class="brew-button" id="brewButton">Brew Drink</button>
+        </div>
+
+        <div class="garden-bed" aria-hidden="true">
+          <span></span><span></span><span></span><span></span><span></span>
+        </div>
+      </section>
+
+      <aside class="play-panel" aria-label="Game controls">
+        <section class="stats" aria-label="Cafe progress">
+          <div>
+            <span>Mooncoins</span>
+            <strong id="coins">20</strong>
+          </div>
+          <div>
+            <span>Reputation</span>
+            <strong id="reputation">1</strong>
+          </div>
+          <div>
+            <span>Streak</span>
+            <strong id="streak">0</strong>
+          </div>
+        </section>
+
+        <section class="how-to-play">
+          <div class="step active">
+            <span>1</span>
+            <p>Read the visitor's order.</p>
+          </div>
+          <div class="step">
+            <span>2</span>
+            <p>Pick exactly 3 herbs.</p>
+          </div>
+          <div class="step">
+            <span>3</span>
+            <p>Press brew to serve.</p>
+          </div>
+        </section>
+
+        <section class="worktop">
+          <div class="section-title">
+            <h2>Herb Bar</h2>
+            <button id="clearButton" title="Clear selected herbs">Clear</button>
+          </div>
+          <div class="ingredients" id="ingredients"></div>
+
+          <div class="selected-tray">
+            <p>Current blend</p>
+            <div id="selectedList" class="selected-list"></div>
+          </div>
+        </section>
+
+        <section class="recipe-book" aria-label="Recipe book">
+          <div class="book-spine"></div>
+          <div class="book-page left-page">
+            <div class="section-title book-title">
+              <h2>Recipe Book</h2>
+              <span id="recipeCount">5 known</span>
+            </div>
+            <div class="recipes" id="recipes"></div>
+          </div>
+          <div class="book-page right-page">
+            <h3>Current Order</h3>
+            <p id="bookHint">Match the customer's clues to one of the recipes.</p>
+            <div class="book-note">
+              Correct drinks earn mooncoins, reputation, and streak bonuses.
+            </div>
+          </div>
+        </section>
+
+        <section class="upgrades-panel">
+          <div class="section-title">
+            <h2>Cafe Upgrades</h2>
+            <span>Spend wisely</span>
+          </div>
+          <div class="upgrades" id="upgrades"></div>
+        </section>
+
+        <div class="message-log" id="messageLog" role="status" aria-live="polite">
+          The cafe is open. Read the order, pick 3 herbs, then brew.
+        </div>
+      </aside>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
