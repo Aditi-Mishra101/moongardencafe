@@ -34,18 +34,26 @@
             </div>
             <h2 id="requestText">I need a gentle drink for peaceful sleep.</h2>
             <p id="recipeHint">calm / floral / dreams</p>
-            <div class="glass-request" id="glassRequest">Crescent cup</div>
+            <div class="glass-request">Serve: <span id="glassRequest">Crescent cup</span></div>
           </div>
         </section>
 
         <section class="brew-panel" aria-label="Brewing station">
+          <div class="atmosphere" aria-hidden="true">
+            <span></span><span></span><span></span><span></span><span></span>
+          </div>
           <div class="moon-ring" aria-hidden="true"></div>
+          <div class="flying-herbs" id="flyingHerbs" aria-hidden="true"></div>
           <div class="brew-station" id="brewStation">
             <div class="station-label">Serving Glass</div>
             <div class="cup" id="cup">
+              <div class="moon-etch" aria-hidden="true"></div>
               <span class="steam steam-one"></span>
               <span class="steam steam-two"></span>
               <span class="steam steam-three"></span>
+              <span class="spark spark-one"></span>
+              <span class="spark spark-two"></span>
+              <span class="spark spark-three"></span>
               <div class="liquid" id="liquid"></div>
             </div>
             <button class="brew-button" id="brewButton">Brew</button>
@@ -57,6 +65,10 @@
           </div>
           <div class="message-log" id="messageLog" role="status" aria-live="polite">
             Pick three herbs for the visitor's drink.
+          </div>
+          <div class="potion-reveal" id="potionReveal" aria-live="polite"></div>
+          <div class="coin-burst" id="coinBurst" aria-hidden="true">
+            <span></span><span></span><span></span><span></span><span></span>
           </div>
         </section>
 

@@ -10,7 +10,7 @@ const herbs = [
 const recipes = [
   {
     name: "Silver Sleep Tisane",
-    request: "I need a gentle drink for peaceful sleep.",
+    request: "Tonight sleep feels distant.",
     hint: "Look for: calm, floral, dreams",
     customer: "Noor Willow",
     mood: "dreamy",
@@ -23,7 +23,7 @@ const recipes = [
   },
   {
     name: "Dawn Glow Brew",
-    request: "Please make something bright enough for morning courage.",
+    request: "Morning courage has gone quiet.",
     hint: "Look for: citrus, mint, shine",
     customer: "Iris Sol",
     mood: "bright",
@@ -36,7 +36,7 @@ const recipes = [
   },
   {
     name: "Garden Heart Tea",
-    request: "I want a cozy herbal cup for a homesick heart.",
+    request: "My heart keeps walking home without me.",
     hint: "Look for: rose, forest, soft",
     customer: "Mira Vale",
     mood: "rosy",
@@ -49,7 +49,7 @@ const recipes = [
   },
   {
     name: "Clear Mist Cooler",
-    request: "Can you brew a clear-headed drink for studying under moonlight?",
+    request: "Moonlight is turning every page into mist.",
     hint: "Look for: fresh, cool, bright",
     customer: "Sage Quill",
     mood: "misty",
@@ -62,7 +62,7 @@ const recipes = [
   },
   {
     name: "Blush Moon Cordial",
-    request: "I need something pretty and sparkling for a garden date.",
+    request: "I want the garden to blush before they arrive.",
     hint: "Look for: rosy, glowing, bright",
     customer: "Elio Bloom",
     mood: "blush",
@@ -105,6 +105,7 @@ const state = {
   streak: 0,
   selected: [],
   currentRecipe: 0,
+  brewing: false,
   bonusCoins: 0,
   bonusRep: 0,
   kindMistakes: false,
@@ -128,6 +129,9 @@ const elements = {
   messageLog: document.querySelector("#messageLog"),
   brewButton: document.querySelector("#brewButton"),
   brewStation: document.querySelector("#brewStation"),
+  flyingHerbs: document.querySelector("#flyingHerbs"),
+  potionReveal: document.querySelector("#potionReveal"),
+  coinBurst: document.querySelector("#coinBurst"),
   clearButton: document.querySelector("#clearButton"),
   cup: document.querySelector("#cup"),
   liquid: document.querySelector("#liquid"),
@@ -151,6 +155,9 @@ function render() {
   elements.customerFigure.dataset.mood = recipe.mood;
   elements.customerFigure.style.setProperty("--portrait-index", recipe.portrait);
   elements.cup.dataset.glass = recipe.glassClass;
+  document.body.classList.toggle("has-lanterns", state.bought.has("lanterns"));
+  document.body.classList.toggle("has-notes", state.bought.has("book"));
+  document.body.classList.toggle("has-greenhouse", state.bought.has("greenhouse"));
 
   renderIngredients();
   renderSelected();
@@ -168,6 +175,7 @@ function renderIngredients() {
     button.type = "button";
     button.setAttribute("aria-label", herb.name);
     button.dataset.herb = herb.id;
+    button.dataset.aura = herb.id;
     button.innerHTML = `
       <span class="herb-icon" style="--herb:${herb.color}; --icon-index:${herb.index}" aria-hidden="true"></span>
       <span class="herb-copy"><strong>${herb.name}</strong><span>${herb.note}</span></span>
@@ -227,6 +235,8 @@ function renderUpgrades() {
 }
 
 function chooseHerb(id) {
+  if (state.brewing) return;
+
   if (state.selected.includes(id)) {
     state.selected = state.selected.filter(item => item !== id);
   } else if (state.selected.length < 3) {
@@ -239,6 +249,8 @@ function chooseHerb(id) {
 }
 
 function brew() {
+  if (state.brewing) return;
+
   if (state.selected.length !== 3) {
     writeMessage("Choose exactly 3 herbs before brewing.");
     pulse(elements.customerCard, "mistake");
@@ -247,8 +259,14 @@ function brew() {
 
   const recipe = recipes[state.currentRecipe];
   const correct = sameSet(state.selected, recipe.combo);
+  state.brewing = true;
+  elements.brewButton.disabled = true;
+  elements.brewButton.textContent = "Brewing...";
+  elements.potionReveal.textContent = "";
+  startRitual();
 
-  if (correct) {
+  window.setTimeout(() => {
+    if (correct) {
     const earned = recipe.reward + state.bonusCoins + state.streak;
     const rep = recipe.rep + state.bonusRep;
     state.coins += earned;
@@ -256,8 +274,10 @@ function brew() {
     state.streak += 1;
     state.currentRecipe = (state.currentRecipe + 1) % recipes.length;
     state.selected = [];
-    writeMessage(`Served ${recipe.name} in the ${recipe.glass}. +${earned} mooncoins, +${rep} reputation.`);
+    elements.potionReveal.textContent = recipe.name;
+    writeMessage(`Served in the ${recipe.glass}. The visitor leaves glowing.`);
     pulse(elements.brewStation, "success");
+    pulse(elements.coinBurst, "burst");
     pulse(elements.customerStage, "arrival");
   } else {
     const loss = state.kindMistakes ? 1 : 3;
@@ -267,7 +287,32 @@ function brew() {
     pulse(elements.customerCard, "mistake");
   }
 
+    state.brewing = false;
+    elements.brewButton.disabled = false;
+    elements.brewButton.textContent = "Brew";
+    elements.brewStation.classList.remove("ritual");
+    elements.flyingHerbs.innerHTML = "";
   render();
+  }, 3100);
+}
+
+function startRitual() {
+  elements.brewStation.classList.remove("ritual");
+  elements.flyingHerbs.innerHTML = "";
+
+  state.selected.forEach((id, index) => {
+    const herb = herbs.find(item => item.id === id);
+    const mote = document.createElement("span");
+    mote.className = "flying-herb";
+    mote.style.setProperty("--herb", herb.color);
+    mote.style.setProperty("--icon-index", herb.index);
+    mote.style.setProperty("--delay", `${index * 160}ms`);
+    elements.flyingHerbs.appendChild(mote);
+  });
+
+  void elements.brewStation.offsetWidth;
+  elements.brewStation.classList.add("ritual");
+  writeMessage("The glass listens. The herbs begin to rise.");
 }
 
 function buyUpgrade(upgrade) {
@@ -308,6 +353,7 @@ function pulse(element, className) {
 
 elements.brewButton.addEventListener("click", brew);
 elements.clearButton.addEventListener("click", () => {
+  if (state.brewing) return;
   state.selected = [];
   writeMessage("Blend cleared.");
   render();
