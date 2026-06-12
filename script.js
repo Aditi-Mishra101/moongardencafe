@@ -11,7 +11,7 @@ const recipes = [
   {
     name: "Silver Sleep Tisane",
     request: "Please make a drink for forgotten dreams.",
-    hint: "calm • floral • dreams",
+    hint: "calm - floral - dreams",
     customer: "Noor Willow",
     mood: "dreamy",
     portrait: 0,
@@ -24,7 +24,7 @@ const recipes = [
   {
     name: "Dawn Glow Brew",
     request: "I need courage for tomorrow.",
-    hint: "bright • cool • brave",
+    hint: "bright - cool - brave",
     customer: "Iris Sol",
     mood: "bright",
     portrait: 1,
@@ -37,7 +37,7 @@ const recipes = [
   {
     name: "Garden Heart Tea",
     request: "I want something that smells like coming home.",
-    hint: "warm • green • tender",
+    hint: "warm - green - tender",
     customer: "Mira Vale",
     mood: "rosy",
     portrait: 2,
@@ -50,7 +50,7 @@ const recipes = [
   {
     name: "Clear Mist Cooler",
     request: "My thoughts keep fogging the windows.",
-    hint: "fresh • clear • golden",
+    hint: "fresh - clear - golden",
     customer: "Sage Quill",
     mood: "misty",
     portrait: 3,
@@ -63,7 +63,7 @@ const recipes = [
   {
     name: "Blush Moon Cordial",
     request: "I miss someone, but I do not want to.",
-    hint: "rose • light • ache",
+    hint: "rose - light - ache",
     customer: "Elio Bloom",
     mood: "blush",
     portrait: 4,

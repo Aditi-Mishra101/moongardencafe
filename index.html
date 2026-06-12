@@ -6,52 +6,46 @@
     <title>Moon Garden Apothecary</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
     <main class="apothecary">
-      <section class="moon-room" aria-label="Moon Garden Apothecary">
-        <div class="living-air" aria-hidden="true">
-          <span></span><span></span><span></span><span></span><span></span><span></span>
+      <div class="scene-backdrop" aria-hidden="true"></div>
+
+      <header class="top-bar">
+        <div class="brand">
+          <p>Moon Garden</p>
+          <h1>Apothecary</h1>
         </div>
-
-        <header class="shop-title">
-          <p>open after midnight</p>
-          <h1>Moon Garden Apothecary</h1>
-        </header>
-
-        <section class="tiny-ledger" aria-label="Apothecary progress">
-          <div><span>mooncoins</span><strong id="coins">20</strong></div>
-          <div><span>reputation</span><strong id="reputation">1</strong></div>
-          <div><span>streak</span><strong id="streak">0</strong></div>
+        <section class="stats" aria-label="Game progress">
+          <div><span>Coins</span><strong id="coins">20</strong></div>
+          <div><span>Reputation</span><strong id="reputation">1</strong></div>
+          <div><span>Streak</span><strong id="streak">0</strong></div>
         </section>
+      </header>
 
-        <div class="moon-window" aria-hidden="true">
-          <div class="window-moon"></div>
-          <span class="ray ray-one"></span>
-          <span class="ray ray-two"></span>
-        </div>
-
-        <section class="visitor-note" id="customerStage" aria-label="Tonight's visitor">
+      <section class="play-layout" aria-label="Moon Garden Apothecary game">
+        <section class="visitor-card" id="customerStage" aria-label="Customer request">
+          <div class="visitor-header">
+            <div class="customer-figure" id="customerFigure"></div>
+            <div>
+              <p>Tonight's visitor</p>
+              <strong id="customerName">Noor Willow</strong>
+            </div>
+          </div>
           <div class="order-card" id="customerCard">
-            <p class="note-label">Tonight's visitor</p>
-            <h2 id="requestText">Tonight sleep feels distant.</h2>
-            <div class="emotion-tags" id="recipeHint">calm / floral / dreams</div>
+            <h2 id="requestText">Please make a drink for forgotten dreams.</h2>
+            <div class="emotion-tags" id="recipeHint">calm - floral - dreams</div>
             <div class="serve-line">Serve in the <span id="glassRequest">Crescent cup</span></div>
           </div>
-          <div class="visitor-mini">
-            <div class="customer-figure" id="customerFigure"></div>
-            <strong id="customerName">Noor Willow</strong>
-          </div>
         </section>
 
-        <section class="brew-table" aria-label="Brewing table">
-          <div class="table-cloth" aria-hidden="true"></div>
+        <section class="brew-area" aria-label="Brewing vessel">
           <div class="flying-herbs" id="flyingHerbs" aria-hidden="true"></div>
           <div class="brew-station" id="brewStation">
-            <div class="cup" id="cup">
-              <div class="moon-etch" aria-hidden="true"></div>
+            <div class="cup" id="cup" aria-hidden="true">
+              <div class="moon-etch"></div>
               <span class="steam steam-one"></span>
               <span class="steam steam-two"></span>
               <span class="steam steam-three"></span>
@@ -63,52 +57,50 @@
               <span class="bubble bubble-three"></span>
               <div class="liquid" id="liquid"></div>
             </div>
-            <button class="brew-button" id="brewButton">brew</button>
+            <button class="brew-button" id="brewButton">Brew</button>
           </div>
-          <div class="blend-cloth">
-            <p>in the cup</p>
+          <div class="selected-tray">
+            <p>Selected herbs</p>
             <div id="selectedList" class="selected-list"></div>
           </div>
           <div class="potion-reveal" id="potionReveal" aria-live="polite"></div>
           <div class="message-log" id="messageLog" role="status" aria-live="polite">
-            Choose three herbs. The vessel will remember.
+            Choose three herbs, then brew.
           </div>
           <div class="coin-burst" id="coinBurst" aria-hidden="true">
             <span></span><span></span><span></span><span></span><span></span>
           </div>
         </section>
 
-        <section class="herb-shelf" aria-label="Wooden herb shelf">
-          <div class="shelf-title">
+        <section class="herb-shelf" aria-label="Herb shelf">
+          <div class="section-heading">
             <h2>Herb Shelf</h2>
-            <button id="clearButton" title="Clear selected herbs">clear</button>
+            <button id="clearButton" title="Clear selected herbs">Clear</button>
           </div>
           <div class="ingredients" id="ingredients"></div>
         </section>
+      </section>
 
+      <section class="support-layout" aria-label="Recipe notebook and upgrades">
         <section class="notebook" aria-label="Recipe notebook">
-          <div class="book-spine"></div>
           <div class="book-page left-page">
-            <span class="pressed-herb pressed-one" aria-hidden="true"></span>
-            <div class="section-title book-title">
-              <h2>Field Notes</h2>
-              <span id="recipeCount">5 found</span>
+            <div class="section-heading book-title">
+              <h2>Recipe Notebook</h2>
+              <span id="recipeCount">5 known</span>
             </div>
             <div class="recipes" id="recipes"></div>
           </div>
           <div class="book-page right-page">
-            <span class="pressed-herb pressed-two" aria-hidden="true"></span>
-            <h3>Tonight's Clue</h3>
-            <p id="bookHint">Listen for the feeling beneath the request.</p>
-            <div class="book-note">Recipes are not instructions. They are memories.</div>
+            <h3>Current clue</h3>
+            <p id="bookHint">Match the request to a recipe.</p>
+            <div class="book-note">Correct drinks earn coins, reputation, and streak bonuses.</div>
           </div>
         </section>
 
-        <section class="upgrade-drawer" aria-label="Apothecary drawer">
-          <div class="drawer-handle"></div>
-          <div class="section-title">
-            <h2>Little Improvements</h2>
-            <span>objects for the room</span>
+        <section class="upgrade-drawer" aria-label="Upgrades">
+          <div class="section-heading">
+            <h2>Upgrades</h2>
+            <span>Optional</span>
           </div>
           <div class="upgrades" id="upgrades"></div>
         </section>
